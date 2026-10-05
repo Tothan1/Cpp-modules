@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:19:00 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/05 12:09:01 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/05 14:50:57 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,10 @@ bool BitcoinExchange::getDataFile(std::string separator, std::string first_line)
     {
         _found = _buffer.find(separator);
         _value = std::atof(&_buffer[_found + separator.size()]);
-        _date = _buffer.substr(0, _found);
+        if(_found==std::string::npos)
+            _date = _buffer.substr(0,10);
+        else
+            _date = _buffer.substr(0, _found);
         return true;
     }
 }
@@ -123,7 +126,8 @@ float BitcoinExchange::BitcoinPrice(std::string reference)
     else
     {
         multimap::iterator it = _csv.lower_bound(reference);
-        --it;
+        if(it!= _csv.begin())
+            --it;
         return it->second;
     }
 }
@@ -134,7 +138,6 @@ void BitcoinExchange::display(std::ifstream &_ifs_input)
         if(this->getDataFile(" | ", "date | value") && !BitcoinExchange::checkError())
             std::cout << _date<< " => " << _value << " = " <<  BitcoinExchange::BitcoinPrice(_date)* _value<<std::endl;
     }
-    
 }
 
 void BitcoinExchange::init(char**av)
