@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:18:50 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/04 21:10:52 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/05 11:46:25 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,24 @@ class BitcoinExchange
 {
     private:
         multimap _csv;
-        multimap _input;
+        //attribute for collect data
+        std::string _buffer;
+        float _value;
+        std::string _date;
+        std::size_t _found;
     public:
         BitcoinExchange(void);
         BitcoinExchange(const BitcoinExchange& other);
         BitcoinExchange &operator=(const BitcoinExchange &other);
         ~BitcoinExchange();
-        multimap & getContentFile(std::string separator, std::ifstream &ifs, multimap & data, std::string first_line);
+        bool getDataFile(std::string separator, std::string first_line);
+        bool checkError(void);
         bool checkDate(std::string &str) const;
         bool checkValue(float min, float max, float check) const;
-        void display(void);
+        void display(std::ifstream &_ifs_input);
         void init(char **av);
         float BitcoinPrice(std::string reference);
-        void parser(char**av);
+        void parser(std::ifstream &_ifs_input);
 };
 
 #endif

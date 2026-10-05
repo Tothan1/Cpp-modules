@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:19:00 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/04 21:46:59 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/05 12:09:01 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange &other)
 BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other)
 {
     this->_csv = other._csv;
-    this->_input = other._input;
+    this->_value = other._value;
+    this->_found = other._found;
+    this->_date = other._date;
     return (*this);
 }
 // Destructor
@@ -62,59 +64,55 @@ bool BitcoinExchange::checkDate(std::string  &str) const
     else
         return false;
 }
-multimap & BitcoinExchange::getContentFile(std::string separator, std::ifstream &ifs, multimap &data, std::string first_line)
+bool BitcoinExchange::checkError(void)
 {
-    std::string buffer;
-    std::string date;
-	std::string contentFilename;
-    std::size_t found;
-    float value;
-    while(getline(ifs, buffer))
+    if(!this->checkDate(_date))
     {
-        found = buffer.find(separator);
-        if (found!=std::string::npos)
-        {
-            value = std::atof(&buffer[found + separator.size()]);
-            date = buffer.substr(0, found);
-            if(!this->checkDate(date))
-            {
-                date = "Error: bad input";
-                value = -1;
-            }
-            else if (!BitcoinExchange::checkValue(0, 100, value))
-            {
-                value = -1;
-                if (value < 0)
-                    date = "Error: not a positive number.";
-                else
-                    date = "Error: too large a number.";
-            }
-        }
-        else if(buffer != first_line && buffer.empty())
-            continue;
-        else
-        {
-            date = "Error: bad input";
-            value = -1;
-        }
-        data.insert(std::pair<std::string, float>(date,value ));
+        std::cout<< "Error: bad input => " << _date<<std::endl;
+        return true;
     }
-	return data;
+    else if(_found==std::string::npos)
+    {
+        std::cout<< "Error: No find separator | "<<std::endl;
+        return true;
+    }
+    else if (!BitcoinExchange::checkValue(0, 100, _value))
+    {
+        if (_value < 0)
+            std::cout<< "Error: not a positive number."<<std::endl;
+        else
+            std::cout<< "Error: too large a number."<<std::endl;
+        return true;
+    }
+    else
+        return false;
+}
+bool BitcoinExchange::getDataFile(std::string separator, std::string first_line)
+{
+    if(_buffer == first_line || _buffer.empty())
+        return false;
+    else
+    {
+        _found = _buffer.find(separator);
+        _value = std::atof(&_buffer[_found + separator.size()]);
+        _date = _buffer.substr(0, _found);
+        return true;
+    }
 }
 
-void BitcoinExchange::parser(char**av)
+void BitcoinExchange::parser(std::ifstream &_ifs_input)
 {
-    std::ifstream _ifs_input(av[1]);
     std::ifstream _ifs_csv("data.csv");
     if( _ifs_csv.is_open() != 1 || _ifs_input.is_open() !=1)
     {
         std::cout << "Error: could not open file or the file are no rule for open!" <<std::endl;
         return ;
     }
-    this->getContentFile(" | ", _ifs_input, _input, "date | value");
-    this->getContentFile(",", _ifs_csv, _csv, "date,exchange_rate");
-    
-    _ifs_input.close();
+    while(getline(_ifs_csv, _buffer))
+    {
+        if(this->getDataFile(",", "date,exchange_rate"))
+            _csv.insert(std::pair<std::string, float>(_date,_value ));
+    }
     _ifs_csv.close();
 }
 
@@ -129,20 +127,20 @@ float BitcoinExchange::BitcoinPrice(std::string reference)
         return it->second;
     }
 }
-void BitcoinExchange::display(void)
+void BitcoinExchange::display(std::ifstream &_ifs_input)
 {
-    multimap::iterator it;
-    
-    for (it = _input.begin(); it != _input.end(); it++)
+    while(getline(_ifs_input, _buffer))
     {
-        std::cout << it->first<< " => " << it->second << " = " <<  BitcoinExchange::BitcoinPrice(it->first)* it->second<<std::endl;
+        if(this->getDataFile(" | ", "date | value") && !BitcoinExchange::checkError())
+            std::cout << _date<< " => " << _value << " = " <<  BitcoinExchange::BitcoinPrice(_date)* _value<<std::endl;
     }
     
 }
 
 void BitcoinExchange::init(char**av)
 {
-    BitcoinExchange::parser(av);
-    BitcoinExchange::display();
-
+    std::ifstream _ifs_input(av[1]);
+    BitcoinExchange::parser(_ifs_input);
+    BitcoinExchange::display(_ifs_input);
+    _ifs_input.close();
 }
