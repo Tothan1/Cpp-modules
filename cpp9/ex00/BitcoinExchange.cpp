@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:19:00 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/05 15:48:38 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/06 16:08:56 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ bool BitcoinExchange::checkError(void)
         std::cerr<< "Error: No find separator | "<<std::endl;
         return true;
     }
-    else if (!BitcoinExchange::checkValue(0, 100, _value))
+    else if (!BitcoinExchange::checkValue(0, 1000, _value))
     {
         if (_value < 0)
             std::cerr<< "Error: not a positive number."<<std::endl;
@@ -94,7 +94,8 @@ bool BitcoinExchange::getDataFile(std::string separator, std::string first_line)
     else
     {
         _found = _buffer.find(separator);
-        _value = std::atof(&_buffer[_found + separator.size()]);
+        if( _found + separator.size()< _buffer.size()) //evitate to access an the case outside for buffer
+            _value = std::atof(&_buffer[_found + separator.size()]);
         if(_found==std::string::npos)
             _date = _buffer.substr(0,10);
         else

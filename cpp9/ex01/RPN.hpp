@@ -32,9 +32,9 @@ class RPN
         };
         //Operation
         bool CheckOverflow(double result);
-        int Addition(int value1, int value2);
-        int Multiplication(int value1, int value2);
-        int Division(int value1, int value2);
+        int Addition(double value1, double value2);
+        int Multiplication(double value1, double value2);
+        int Division(double value1, double value2);
         //Global
         bool isOperator(int i);
         bool parsing();

@@ -5,21 +5,19 @@ RPN::RPN(void)
 {
     return ;
 }
-
 // Copy constructor
 RPN::RPN(const RPN &other)
 {
-    (void) other;
+    *this = other;
     return ;
 }
-
 // Assignment operator overload
 RPN &RPN::operator=(const RPN &other)
 {
-    (void) other;
+    this->_input = other._input;
+    this->_stack = other._stack;
     return (*this);
 }
-
 // Destructor
 RPN::~RPN(void)
 {
@@ -42,28 +40,28 @@ bool RPN::CheckOverflow(double result)
         return false;
 }
 //Operator
-int RPN::Addition(int value1, int value2)
+int RPN::Addition(double value1, double value2)
 {
     if(CheckOverflow(value1 + value2))
         return (value1 + value2);
     else
         throw RPN::Overflow();
 }
-int RPN::Multiplication(int value1, int value2)
+int RPN::Multiplication(double value1, double value2)
 {
     if(CheckOverflow(value1 * value2))
         return (value1 * value2);
     else
         throw RPN::Overflow();
 }
-int RPN::Division(int value1, int value2)
+int RPN::Division(double value1, double value2)
 {
-    if( value2 == 0)
+    if( value1 == 0)
         throw RPN::DivisionByZero();
-    else if(!CheckOverflow(value1 / value2))
+    else if(!CheckOverflow(value2 / value1))
         throw RPN::Overflow();
     else
-        return (value1 / value2);
+        return (value2 / value1);
 }
 //Other
 bool RPN::isOperator(int i)
@@ -101,7 +99,7 @@ void RPN::calculate(void)
     int value1;
     int value2;
     char sign[4];
-    int (RPN::*ptr[4]) (int value1, int value2);
+    int (RPN::*ptr[4]) (double value1, double value2);
     
     sign[0] = '+';
     sign[1] = '-';
@@ -115,7 +113,6 @@ void RPN::calculate(void)
     {
         if (!RPN::isOperator(i))
         {
-            // std::cout << "stack add: " << _input[i]<<std::endl;
             _stack.push(_input[i] - '0'); // mines '0' for give real value of int and not the value int of ascii
             i++;
         }
@@ -135,9 +132,7 @@ void RPN::calculate(void)
                 for (size_t y = 0; y < 4; y++)
                 {
                     if(_input[i] == sign[y])
-                    {
                         _stack.push( (this->*ptr[y])(value1, value2));
-                    }
                 }
                 i++;
             }
@@ -148,7 +143,6 @@ void RPN::calculate(void)
             }
         }
     }
-    std::cout << _stack.top() <<std::endl;
 }
 void RPN::global(char **av)
 {
@@ -156,4 +150,8 @@ void RPN::global(char **av)
     if(!RPN::parsing())
         return;
     RPN::calculate();
+    if(_stack.size() == 1)
+        std::cout << _stack.top() <<std::endl;
+    else
+        std::cout << "please add an operator" <<std::endl;
 }
