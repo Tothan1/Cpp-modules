@@ -21,6 +21,7 @@ do
 class $capClass
 {
     public:
+        //Form canonical
         $capClass(void);
         $capClass(const $capClass& other);
         $capClass &operator=(const $capClass &other);

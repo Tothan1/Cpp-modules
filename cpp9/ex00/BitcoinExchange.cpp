@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:19:00 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/05 14:50:57 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/05 15:48:38 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,20 @@ bool BitcoinExchange::checkError(void)
 {
     if(!this->checkDate(_date))
     {
-        std::cout<< "Error: bad input => " << _date<<std::endl;
+        std::cerr<< "Error: bad input => " << _date<<std::endl;
         return true;
     }
     else if(_found==std::string::npos)
     {
-        std::cout<< "Error: No find separator | "<<std::endl;
+        std::cerr<< "Error: No find separator | "<<std::endl;
         return true;
     }
     else if (!BitcoinExchange::checkValue(0, 100, _value))
     {
         if (_value < 0)
-            std::cout<< "Error: not a positive number."<<std::endl;
+            std::cerr<< "Error: not a positive number."<<std::endl;
         else
-            std::cout<< "Error: too large a number."<<std::endl;
+            std::cerr<< "Error: too large a number."<<std::endl;
         return true;
     }
     else
@@ -108,7 +108,7 @@ void BitcoinExchange::parser(std::ifstream &_ifs_input)
     std::ifstream _ifs_csv("data.csv");
     if( _ifs_csv.is_open() != 1 || _ifs_input.is_open() !=1)
     {
-        std::cout << "Error: could not open file or the file are no rule for open!" <<std::endl;
+        std::cerr << "Error: could not open file or the file are no rule for open!" <<std::endl;
         return ;
     }
     while(getline(_ifs_csv, _buffer))
@@ -136,7 +136,7 @@ void BitcoinExchange::display(std::ifstream &_ifs_input)
     while(getline(_ifs_input, _buffer))
     {
         if(this->getDataFile(" | ", "date | value") && !BitcoinExchange::checkError())
-            std::cout << _date<< " => " << _value << " = " <<  BitcoinExchange::BitcoinPrice(_date)* _value<<std::endl;
+            std::cerr << _date<< " => " << _value << " = " <<  BitcoinExchange::BitcoinPrice(_date)* _value<<std::endl;
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:18:50 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/05 11:46:25 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/06 11:04:07 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class BitcoinExchange
         std::string _date;
         std::size_t _found;
     public:
+        //Form canonical
         BitcoinExchange(void);
         BitcoinExchange(const BitcoinExchange& other);
         BitcoinExchange &operator=(const BitcoinExchange &other);
