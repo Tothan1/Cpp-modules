@@ -79,7 +79,7 @@ bool RPN::parsing()
         {
             if(_input[i+1] != ' ' && i + 1 != _input.size())
             {
-                std::cout<< "Error"<<std::endl;
+                std::cerr<< "Error"<<std::endl;
                 return false;
             }
             else
@@ -87,7 +87,7 @@ bool RPN::parsing()
         }
         else
         {
-            std::cout<< "Error" <<std::endl;
+            std::cerr<< "Error" <<std::endl;
             return false;
         }
     }
@@ -153,5 +153,5 @@ void RPN::global(char **av)
     if(_stack.size() == 1)
         std::cout << _stack.top() <<std::endl;
     else
-        std::cout << "please add an operator" <<std::endl;
+        std::cerr << "please add an operator" <<std::endl;
 }
