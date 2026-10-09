@@ -48,7 +48,7 @@ int PmergeMe::JacobsthalNumber (int nb)
         return 0;
     if (nb == 1)
         return 1;
-    return(JacobsthalNumber(nb - 1) + 2 *JacobsthalNumber(nb - 2))
+    return(JacobsthalNumber(nb - 1) + 2 *JacobsthalNumber(nb - 2));
 }
 void PmergeMe::parsing(int ac, char **av)
 {
@@ -85,47 +85,82 @@ T & PmergeMe::SortPairIndividually(T& container)
 }
 
 template <typename T>
-T & PmergeMe::RecursiveSortBigNb(T& original)
+T & PmergeMe::RecursiveSortBigNb(T& pair)
 {
-    T& modif;
-    for (size_t i = 0; i < original.size() / 2; i++)
-        modif.push_back(std::pair<int, int> (_vec[i * 2].first, _vec[(i * 2) + 1].first));
-    return  PmergeMe::algoVec(modif);
+    std::vector <int> modif;
+    for (size_t i = 0; i < pair.size(); i= i+ 2)
+    {
+        modif.push_back(pair[i * 2].first);
+        modif.push_back(pair[(i * 2) + 1].first);
+    }
+    PmergeMe::algoVec(modif);
+    return pair ;
+}
+template <typename U>
+void PmergeMe::insertOnMain(U& Main, int to_find)
+{
+    typename U::iterator it;
+    it = std::lower_bound(Main.begin(), Main.end(), to_find);
+    if(it!= Main.begin())
+        --it;
+    Main.insert(it, to_find);
+}
+template <typename T, typename U>
+void PmergeMe::Insert(T& containerPair, U& Main, U& Pend)
+{
+    int n = 3;
+    int nb_jacob = 3;
+    int old_nb_jacob = 1;
+    U jacob;
+    Main.push_back(containerPair[0].second);
+    for (size_t i = 0; i < Main.size() + 1; i++)
+        Main.push_back(containerPair[i].first);
+    for (size_t i = 1; i < Main.size() - 1; i++)
+        Pend.push_back(containerPair[i].second);
+    while (nb_jacob< static_cast<int>(Pend.size()))
+    {
+        for (int i = 0; i < nb_jacob - old_nb_jacob; i++)
+            jacob.push_back(nb_jacob - i);
+        old_nb_jacob = nb_jacob;
+        nb_jacob = PmergeMe::JacobsthalNumber(n++);
+    }
+    for (size_t i = 0; i < Pend.size(); i++)
+    {
+        PmergeMe::insertOnMain(Main, Pend[jacob[i]- 2]);
+        Pend.erase( Pend.begin() + (jacob[i] - 2));
+    }
+    if(this->_is_odd)
+        PmergeMe::insertOnMain(Main, _nb_struggler);
 }
 
-template <typename T, typename U>
-T & PmergeMe::Insert(T& containerPair, U& containerMain, U& containerPend)
+template <typename T>
+T & PmergeMe::algoVec(T& work)
 {
-    containerMain.push_back()= containerPair[0].second;
-    for (size_t i = 0; i < containerMain.size() + 1; i++)
-        containerMain.push_back(containerPair[i].first);
-    for (size_t i = 1; i < containerMain.size() - 1; i++)
-        containerPend.push_back(containerPair[i].second);
-}
-std::vector<int> PmergeMe::algoVec(std::vector<std::pair <int, int> > work)
-{
-    std::vector <int> Main;
+    std::vector<std::pair <int, int> > pair;
     std::vector <int> Pend;
-    if(_vec.size()%2 != 0)
+    if(work.size() <= 1)
+        return work;
+    if(work.size()%2 != 0)
     {
         _is_odd = true;
-        _nb_struggler = _vec.back();
-        _vec.pop_back();
+        _nb_struggler = work.back();
+        work.pop_back();
     }
-    for (size_t i = 0; i < _vec.size() / 2; i++)
-        work.push_back(std::pair<int, int> (_vec[i * 2], _vec[(i * 2) + 1]));
-    PmergeMe::SortPairIndividually(work);
-    PmergeMe::RecursiveSortBigNb(work);
-    PmergeMe::Insert(work, Main, Pend);
-    for (size_t i = 0; i < work.size(); i++)
-        std::cout << "first: "<<work[i].first << "second: "<<work[i].second << std::endl;
-    
-    return _vec;
+    for (size_t i = 0; i < work.size() / 2; i++)
+        pair.push_back(std::pair<int, int> (work[i * 2], work[(i * 2) + 1]));
+    PmergeMe::SortPairIndividually(pair);
+    PmergeMe::RecursiveSortBigNb(pair);
+    PmergeMe::Insert(pair, _Main, Pend);
+    // for (size_t i = 0; i < work.size(); i++)
+        // std::cout << "first: "<<work[i].first << "second: "<<work[i].second << std::endl;
+    return _Main;
 }
 
 void PmergeMe::global(int ac, char **av)
 {
+    std::vector<int> Main;
     PmergeMe::parsing(ac, av);
-	PmergeMe::algoVec(_work);
-
+	Main = PmergeMe::algoVec(_vec);
+    for (size_t i = 0; i < Main.size(); i++)
+        std::cout << Main[i] << std::endl;
 }

@@ -9,6 +9,7 @@
 class PmergeMe
 {
     private:
+        std::vector <int> _Main;
         std::vector<int> _vec;
         std::vector<std::pair <int, int> > _work;
         std::deque<int> _deq;
@@ -22,17 +23,19 @@ class PmergeMe
         ~PmergeMe();
         void global(int ac, char **av);
         void parsing(int ac, char **av);
-        std::vector<int> algoVec(std::vector<std::pair <int, int> >);
+        template <typename T>
+        T& algoVec(T& work);
         template <typename T>
         T & SortPairIndividually(T & container);
         template <typename T>
-        T & PmergeMe::RecursiveSortBigNb(T& container);
+        T & RecursiveSortBigNb(T& container);
         template <typename T, typename U>
-        T & PmergeMe::Insert(T& containerPair, U& containerMain, U& containerPend);
+        void Insert(T& containerPair, U& containerMain, U& containerPend);
         int JacobsthalNumber (int nb);
         template <typename T, typename U>
         U & FillContainer(T& original, U& newcontainer, int size, bool original_is_paired);
-
+        template <typename U>
+        void insertOnMain(U& Main, int to_find);
 };
 
 #endif
