@@ -88,11 +88,8 @@ template <typename T>
 T & PmergeMe::RecursiveSortBigNb(T& pair)
 {
     std::vector <int> modif;
-    for (size_t i = 0; i < pair.size(); i= i+ 2)
-    {
-        modif.push_back(pair[i * 2].first);
-        modif.push_back(pair[(i * 2) + 1].first);
-    }
+    for (size_t i = 0; i < pair.size(); i++)
+        modif.push_back(pair[i].first);
     PmergeMe::algoVec(modif);
     return pair ;
 }
@@ -101,43 +98,48 @@ void PmergeMe::insertOnMain(U& Main, int to_find)
 {
     typename U::iterator it;
     it = std::lower_bound(Main.begin(), Main.end(), to_find);
-    if(it!= Main.begin())
-        --it;
+    if(it!= Main.end())
+        ++it;
     Main.insert(it, to_find);
 }
 template <typename T, typename U>
 void PmergeMe::Insert(T& containerPair, U& Main, U& Pend)
 {
-    int n = 3;
+    size_t len_Pend;
     int nb_jacob = 3;
     int old_nb_jacob = 1;
     U jacob;
     Main.push_back(containerPair[0].second);
-    for (size_t i = 0; i < Main.size() + 1; i++)
-        Main.push_back(containerPair[i].first);
-    for (size_t i = 1; i < Main.size() - 1; i++)
+    for (size_t i = 1; i < containerPair.size(); i++)
         Pend.push_back(containerPair[i].second);
-    while (nb_jacob< static_cast<int>(Pend.size()))
+    len_Pend = Pend.size();
+    if (len_Pend > 1)
+        jacob.push_back(3);
+    jacob.push_back(2);
+    while (nb_jacob - 2 < static_cast<int>(len_Pend))
     {
         for (int i = 0; i < nb_jacob - old_nb_jacob; i++)
             jacob.push_back(nb_jacob - i);
         old_nb_jacob = nb_jacob;
-        nb_jacob = PmergeMe::JacobsthalNumber(n++);
+        nb_jacob = JacobsthalNumber(nb_jacob) + 2 *JacobsthalNumber(nb_jacob -1);
     }
-    for (size_t i = 0; i < Pend.size(); i++)
+    for (size_t i = 0; i <len_Pend; i++)
     {
-        PmergeMe::insertOnMain(Main, Pend[jacob[i]- 2]);
-        Pend.erase( Pend.begin() + (jacob[i] - 2));
+        for (size_t i = 0; jacob[i]-2 >= static_cast<int>(len_Pend); i++)
+        {}
+        PmergeMe::insertOnMain(Main, Pend[jacob[i]-2]);
+        Pend.erase( Pend.begin() + (jacob[i]-2));
     }
     if(this->_is_odd)
         PmergeMe::insertOnMain(Main, _nb_struggler);
 }
 
 template <typename T>
-T & PmergeMe::algoVec(T& work)
+T  PmergeMe::algoVec(T& work)
 {
     std::vector<std::pair <int, int> > pair;
     std::vector <int> Pend;
+    std::vector <int> Winners;
     if(work.size() <= 1)
         return work;
     if(work.size()%2 != 0)
@@ -149,11 +151,13 @@ T & PmergeMe::algoVec(T& work)
     for (size_t i = 0; i < work.size() / 2; i++)
         pair.push_back(std::pair<int, int> (work[i * 2], work[(i * 2) + 1]));
     PmergeMe::SortPairIndividually(pair);
-    PmergeMe::RecursiveSortBigNb(pair);
-    PmergeMe::Insert(pair, _Main, Pend);
+    for (size_t i = 0; i < pair.size(); i++)
+        Winners.push_back(pair[i].first);
+    PmergeMe::algoVec(Winners);
+    PmergeMe::Insert(pair, Winners, Pend);
     // for (size_t i = 0; i < work.size(); i++)
         // std::cout << "first: "<<work[i].first << "second: "<<work[i].second << std::endl;
-    return _Main;
+    return Winners;
 }
 
 void PmergeMe::global(int ac, char **av)
@@ -162,5 +166,5 @@ void PmergeMe::global(int ac, char **av)
     PmergeMe::parsing(ac, av);
 	Main = PmergeMe::algoVec(_vec);
     for (size_t i = 0; i < Main.size(); i++)
-        std::cout << Main[i] << std::endl;
+        std::cout << Main[i] << ", ";
 }

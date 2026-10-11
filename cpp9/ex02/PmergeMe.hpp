@@ -24,7 +24,7 @@ class PmergeMe
         void global(int ac, char **av);
         void parsing(int ac, char **av);
         template <typename T>
-        T& algoVec(T& work);
+        T algoVec(T& work);
         template <typename T>
         T & SortPairIndividually(T & container);
         template <typename T>
