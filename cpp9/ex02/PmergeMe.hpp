@@ -9,7 +9,6 @@
 class PmergeMe
 {
     private:
-        std::vector <int> _Main;
         std::vector<int> _vec;
         std::deque<int> _deq;
     public:

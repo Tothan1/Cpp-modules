@@ -9,14 +9,17 @@ PmergeMe::PmergeMe(void)
 // Copy constructor
 PmergeMe::PmergeMe(const PmergeMe &other)
 {
-    (void) other;
-    return ;
+    *this = other;
 }
 
 // Assignment operator overload
 PmergeMe &PmergeMe::operator=(const PmergeMe &other)
 {
-    (void) other;
+    if(this != &other)
+    {
+        _vec = other._vec;
+        _deq = other._deq;
+    }
     return (*this);
 }
 
@@ -115,8 +118,8 @@ template <typename T>
 void PmergeMe::Insert(T& Main, T& Pend, bool _is_odd, int _nb_struggler)
 {
     int len_Pend;
-    int nb_jacob = 1;
-    int old_nb_jacob = 0;
+    int nb_jacob = 5;
+    int old_nb_jacob = 3;
 	int a = 0;
     T jacob;
     len_Pend = static_cast<int>(Pend.size());
