@@ -98,16 +98,17 @@ void PmergeMe::insertOnMain(U& Main, int to_find)
 {
     typename U::iterator it;
     it = std::lower_bound(Main.begin(), Main.end(), to_find);
-    if(it!= Main.end())
-        ++it;
+    // if(it!= Main.begin())
+        // --it;
     Main.insert(it, to_find);
 }
 template <typename T, typename U>
 void PmergeMe::Insert(T& containerPair, U& Main, U& Pend)
 {
     size_t len_Pend;
-    int nb_jacob = 3;
-    int old_nb_jacob = 1;
+    int nb_jacob = 5;
+    int old_nb_jacob = 3;
+	int a = 0;
     U jacob;
     Main.push_back(containerPair[0].second);
     for (size_t i = 1; i < containerPair.size(); i++)
@@ -123,12 +124,16 @@ void PmergeMe::Insert(T& containerPair, U& Main, U& Pend)
         old_nb_jacob = nb_jacob;
         nb_jacob = JacobsthalNumber(nb_jacob) + 2 *JacobsthalNumber(nb_jacob -1);
     }
-    for (size_t i = 0; i <len_Pend; i++)
+	for (int i = 0; i < nb_jacob - old_nb_jacob; i++)
+            jacob.push_back(nb_jacob - i);
+	// for (size_t i = 0; i < jacob.size(); i++)
+        // std::cout << jacob[i] << ", ";
+    std::cout << std::endl;
+    for (int i = 0; i <static_cast<int>(len_Pend); i++)
     {
-        for (size_t i = 0; jacob[i]-2 >= static_cast<int>(len_Pend); i++)
-        {}
-        PmergeMe::insertOnMain(Main, Pend[jacob[i]-2]);
-        Pend.erase( Pend.begin() + (jacob[i]-2));
+        while (jacob[i+a]-2 >= static_cast<int>(len_Pend))
+			a++;
+        PmergeMe::insertOnMain(Main, Pend[jacob[i+a]-2]);
     }
     if(this->_is_odd)
         PmergeMe::insertOnMain(Main, _nb_struggler);
@@ -164,7 +169,8 @@ void PmergeMe::global(int ac, char **av)
 {
     std::vector<int> Main;
     PmergeMe::parsing(ac, av);
-	Main = PmergeMe::algoVec(_vec);
+	Main = _vec;
+	Main = PmergeMe::algoVec(Main);
     for (size_t i = 0; i < Main.size(); i++)
         std::cout << Main[i] << ", ";
 }

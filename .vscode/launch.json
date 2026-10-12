@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
      	"program": "${workspaceFolder}/cpp9/ex02/PmergeMe",
-            "args": ["3", "5", "9", "7", "4", "2", "12", "13", "94", "64"],
+            "args": ["3", "5", "9", "7", "4", "2", "12", "13", "94", "64", "39", "59", "99", "79", "49", "29", "129", "139", "949", "649"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
