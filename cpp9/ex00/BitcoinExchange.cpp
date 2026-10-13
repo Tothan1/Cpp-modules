@@ -6,7 +6,7 @@
 /*   By: tle-rhun <tle-rhun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 19:19:00 by tle-rhun          #+#    #+#             */
-/*   Updated: 2026/10/06 16:08:56 by tle-rhun         ###   ########.fr       */
+/*   Updated: 2026/10/13 14:50:49 by tle-rhun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,15 +122,13 @@ void BitcoinExchange::parser(std::ifstream &_ifs_input)
 
 float BitcoinExchange::BitcoinPrice(std::string reference)
 {
-    if(_csv[reference])
-        return _csv[reference];
-    else
-    {
-        multimap::iterator it = _csv.lower_bound(reference);
-        if(it!= _csv.begin())
-            --it;
-        return it->second;
-    }
+    multimap::iterator itf = _csv.find(reference);
+    if(itf!= _csv.end())
+        return itf->second;
+    multimap::iterator it = _csv.lower_bound(reference);
+    if(it!= _csv.begin())
+        --it;
+    return it->second;
 }
 void BitcoinExchange::display(std::ifstream &_ifs_input)
 {
